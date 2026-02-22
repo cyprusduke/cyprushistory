@@ -7,7 +7,9 @@
   --muted: #2d5068;
   --accent: #c08b2c;
   --accent-light: rgba(192, 139, 44, 0.13);
-  --line: rgba(16, 33, 49, 0.12);
+  --line: rgba(16, 33, 49, 0.11);
+  --line-dark: rgba(255, 255, 255, 0.13);
+  --line-gold: rgba(192, 139, 44, 0.35);
   --shadow-sm: 0 4px 14px rgba(8, 20, 32, 0.10);
   --shadow-md: 0 10px 28px rgba(8, 20, 32, 0.14);
   --shadow-lg: 0 20px 44px rgba(8, 20, 32, 0.18);
@@ -46,6 +48,7 @@ body {
   position: relative;
   padding: 2.8rem 0 2.4rem;
   overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 /* diagonal stripe texture */
@@ -80,16 +83,19 @@ body {
 .lang-switcher {
   display: flex;
   gap: 0.4rem;
-  margin-bottom: 2.2rem;
+  margin-left: auto;
+}
+
+.lang-bar {
+  display: none;
 }
 
 .lang-btn {
   padding: 0.3rem 0.78rem;
-  border: 1.5px solid rgba(244, 247, 250, 0.28);
+  border: 1.5px solid rgba(244, 247, 250, 0.22);
   border-radius: 7px;
   background: transparent;
   color: rgba(244, 247, 250, 0.48);
-  font-family: "Manrope", sans-serif;
   font-size: 0.73rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -98,7 +104,7 @@ body {
 }
 
 .lang-btn:hover {
-  border-color: rgba(244, 247, 250, 0.58);
+  border-color: rgba(244, 247, 250, 0.52);
   color: rgba(244, 247, 250, 0.86);
 }
 
@@ -135,12 +141,12 @@ body {
 /* ─── Hero typography ────────────────────────────── */
 
 h1, h2 {
-  font-family: "Literata", serif;
   margin: 0;
 }
 
 h1 {
   font-size: clamp(2rem, 3.8vw, 3.15rem);
+  font-weight: 800;
   line-height: 1.12;
   text-shadow: 0 3px 24px rgba(6, 16, 26, 0.5);
   white-space: nowrap;
@@ -151,6 +157,56 @@ h1 {
   color: rgba(244, 247, 250, 0.82);
   font-size: 1rem;
   white-space: nowrap;
+}
+
+/* ─── Tabs ───────────────────────────────────────── */
+
+.tabs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0.7rem 0;
+  background: rgba(9, 26, 39, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.tabs-nav .container {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.tab-btn {
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(244, 247, 250, 0.9);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.34);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #13283a;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
 }
 
 /* ─── Timeline ───────────────────────────────────── */
@@ -193,9 +249,9 @@ h1 {
   background: var(--paper);
   border-radius: var(--radius);
   padding: 1.25rem 1.4rem 1.25rem 1.35rem;
-  border: 1px solid rgba(16, 33, 49, 0.06);
-  border-left: 3px solid transparent;
-  box-shadow: var(--shadow-md);
+  border: 1px solid var(--line);
+  border-left: 3px solid rgba(192, 139, 44, 0.22);
+  box-shadow: var(--shadow-sm);
   transition: transform var(--t), box-shadow var(--t), border-left-color var(--t);
   animation: fadeUp 0.5s ease-out both;
 }
@@ -224,12 +280,11 @@ h1 {
   height: 1.45rem;
   border-radius: 50%;
   background: var(--accent);
-  border: 2.5px solid #ede8db;
+  border: 2.5px solid #ddd8cc;
   box-shadow: 0 0 0 3.5px rgba(192, 139, 44, 0.22);
   color: #fff;
   font-size: 0.6rem;
   font-weight: 700;
-  font-family: "Manrope", sans-serif;
   display: grid;
   place-items: center;
 }
@@ -263,7 +318,7 @@ li + li {
 
 li.pres {
   list-style: none;
-  background: rgba(192, 139, 44, 0.11);
+  background: rgba(192, 139, 44, 0.10);
   border-left: 2.5px solid var(--accent);
   border-radius: 0 7px 7px 0;
   padding: 0.42rem 0.7rem;
@@ -275,7 +330,8 @@ time {
   display: inline-block;
   font-weight: 700;
   color: var(--muted);
-  background: rgba(45, 80, 104, 0.09);
+  background: rgba(45, 80, 104, 0.07);
+  border: 1px solid rgba(45, 80, 104, 0.14);
   padding: 0.04em 0.44em;
   border-radius: 5px;
   font-size: 0.92em;
@@ -292,9 +348,152 @@ strong {
   font-weight: 700;
 }
 
+/* ─── Ministers panel ────────────────────────────── */
+
+.ministers {
+  padding: 2.2rem 0 3.5rem;
+}
+
+.minister-group {
+  margin-bottom: 2.4rem;
+}
+
+.minister-group h2 {
+  color: #f4f7fa;
+  border-bottom: 2px solid var(--line-gold);
+  margin-bottom: 1.1rem;
+}
+
+.minister-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+
+.minister-card {
+  background: var(--paper);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--t), box-shadow var(--t);
+}
+
+.minister-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.mc-role {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.35;
+}
+
+.mc-name {
+  margin: 0;
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ─── Holidays panel ─────────────────────────────── */
+
+.holidays {
+  padding: 2.2rem 0 3.5rem;
+}
+
+.holiday-group {
+  margin-bottom: 2.4rem;
+}
+
+.holiday-group h2 {
+  color: #f4f7fa;
+  border-bottom: 2px solid var(--line-gold);
+  margin-bottom: 1.1rem;
+}
+
+.table-wrap {
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+.holiday-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--paper);
+}
+
+.holiday-table thead th {
+  background: #f3efe3;
+  color: var(--ink);
+  text-align: left;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 2px solid rgba(16, 33, 49, 0.13);
+  font-size: 0.93rem;
+  font-weight: 700;
+}
+
+.holiday-table tbody td {
+  padding: 0.64rem 0.9rem;
+  border-bottom: 1px solid rgba(16, 33, 49, 0.07);
+  vertical-align: middle;
+  font-size: 0.92rem;
+}
+
+.holiday-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.holiday-table tbody td:first-child {
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--muted);
+  width: 9rem;
+  border-right: 1px solid rgba(16, 33, 49, 0.07);
+}
+
+.holiday-table tbody tr:nth-child(even) {
+  background: rgba(20, 48, 68, 0.03);
+}
+
+.holiday-table tbody tr:hover {
+  background: rgba(192, 139, 44, 0.10);
+}
+
 /* ─── Responsive ─────────────────────────────────── */
 
 @media (max-width: 700px) {
+  .lang-switcher {
+    display: none;
+  }
+
+  .lang-bar {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    padding: 0.7rem 1rem;
+    background: rgba(9, 26, 39, 0.94);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--line-dark);
+  }
+
+  .panel.active > main {
+    padding-bottom: 4rem;
+  }
+
   .hero {
     padding: 2rem 0 1.8rem;
   }
@@ -306,6 +505,15 @@ strong {
 
   .hero__subtitle {
     white-space: normal;
+  }
+
+  .tabs-nav .container {
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
   }
 
   .timeline {
@@ -331,5 +539,13 @@ strong {
 
   ul {
     padding-left: 0.95rem;
+  }
+
+  .ministers {
+    padding-top: 1.7rem;
+  }
+
+  .minister-grid {
+    grid-template-columns: 1fr;
   }
 }
