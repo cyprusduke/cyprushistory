@@ -27,6 +27,7 @@
       <button class="tab-btn active" id="tabTimeline" role="tab" aria-selected="true" data-i18n="tabTimeline">Хронология</button>
       <button class="tab-btn" id="tabMinisters" role="tab" aria-selected="false" data-i18n="tabMinisters">Министры</button>
       <button class="tab-btn" id="tabHolidays" role="tab" aria-selected="false" data-i18n="tabHolidays">Праздники</button>
+      <button class="tab-btn" id="tabQuiz" role="tab" aria-selected="false" data-i18n="tabQuiz">Тренажер</button>
       <div class="lang-switcher" role="group" aria-label="Language">
         <button class="lang-btn lang-btn-ru active">RU</button>
         <button class="lang-btn lang-btn-el">EL</button>
@@ -335,6 +336,31 @@
     </main>
   </div>
 
+  <!-- ─── Quiz panel ────────────────────────────── -->
+  <div id="panelQuiz" class="panel" role="tabpanel">
+    <main class="container quiz">
+      <div class="quiz-header">
+        <h2 data-i18n="tabQuiz">Тренажер дат</h2>
+        <div class="quiz-stats">
+          <span data-i18n="quizScore">Очки:</span> <span id="quizScore">0</span> / <span id="quizTotal">0</span>
+        </div>
+      </div>
+
+      <div id="quizContainer" class="quiz-container">
+        <div id="quizQuestion" class="quiz-question"></div>
+        <div id="quizOptions" class="quiz-options"></div>
+        <button id="quizNextBtn" class="quiz-btn" data-i18n="quizNext">Следующий вопрос</button>
+        <button id="quizRestartBtn" class="quiz-btn quiz-btn-restart" data-i18n="quizRestart">Начать заново</button>
+      </div>
+
+      <div id="quizResults" class="quiz-results" style="display:none;">
+        <h3 data-i18n="quizResults">Результаты</h3>
+        <p><span data-i18n="quizFinal">Ваш результат:</span> <span id="quizFinalScore">0</span> / <span id="quizFinalTotal">0</span></p>
+        <button id="quizRestartBtn2" class="quiz-btn" data-i18n="quizRestart">Начать заново</button>
+      </div>
+    </main>
+  </div>
+
   <!-- ─── Mobile lang bar ──────────────────────────── -->
   <div class="lang-bar" role="group" aria-label="Language">
     <button class="lang-btn lang-btn-ru active">RU</button>
@@ -351,6 +377,7 @@
         timelineLabel:  'Хронология событий',
         tabTimeline:    'Хронология',
         tabMinisters:   'Министры',
+        tabQuiz:        'Тренажер дат',
         groupMinisters:  'Министерства',
         groupDeputy:     'Заместители министра',
         groupOther:      'Прочие должности',
@@ -405,6 +432,11 @@
         era7li3: '<time datetime="2024-06-09">9 июня 2024</time> — Выборы в Европейский парламент.',
         era7li4: '<time datetime="2025">2025–2026</time> — Продолжение дипломатических инициатив по кипрскому урегулированию.',
         era7li5: '<time datetime="2026-05">Май 2026 (ожидается)</time> — Парламентские выборы.',
+        quizScore:      'Очки:',
+        quizNext:       'Следующий вопрос',
+        quizRestart:    'Начать заново',
+        quizResults:    'Результаты',
+        quizFinal:      'Ваш результат:',
       },
       el: {
         pageTitle:      'Δημοκρατία της Κύπρου: χρονολογία (1960–2026)',
@@ -413,6 +445,7 @@
         timelineLabel:  'Χρονολόγιο γεγονότων',
         tabTimeline:    'Χρονολόγιο',
         tabMinisters:   'Υπουργοί',
+        tabQuiz:        'Σύντομη δοκιμή ημερομηνιών',
         groupMinisters:  'Υπουργεία',
         groupDeputy:     'Υφυπουργοί',
         groupOther:      'Άλλες θέσεις',
@@ -467,8 +500,191 @@
         era7li3: '<time datetime="2024-06-09">9 Ιουνίου 2024</time> — Εκλογές για το Ευρωπαϊκό Κοινοβούλιο.',
         era7li4: '<time datetime="2025">2025–2026</time> — Συνέχιση διπλωματικών πρωτοβουλιών για την κυπριακή διευθέτηση.',
         era7li5: '<time datetime="2026-05">Μάιος 2026 (αναμένεται)</time> — Βουλευτικές εκλογές.',
+        quizScore:      'Σκορ:',
+        quizNext:       'Επόμενη ερώτηση',
+        quizRestart:    'Ξεκινήστε ξανά',
+        quizResults:    'Αποτελέσματα',
+        quizFinal:      'Το αποτέλεσμά σας:',
       }
     };
+
+    // Quiz data
+    const quizQuestions = [
+      { event: { ru: 'Провозглашение независимости Республики Кипр от Великобритании', el: 'Ανακήρυξη της ανεξαρτησίας της Δημοκρατίας της Κύπρου από τη Μεγάλη Βρετανία' }, correctDate: '1960-08-16' },
+      { event: { ru: 'Подписаны Договор гарантии и Договор союза (Лондон)', el: 'Υπογραφή της Συνθήκης Εγγύησης και της Συνθήκης Συμμαχίας (Λονδίνο)' }, correctDate: '1959-02-19' },
+      { event: { ru: 'Кровавое Рождество — начало межобщинных столкновений', el: 'Κρίση της διακοινοτικής βίας' }, correctDate: '1963-12-21' },
+      { event: { ru: 'Создание миротворческой миссии ООН (UNFICYP)', el: 'Ίδρυση της ειρηνευτικής δύναμης του ΟΗΕ (UNFICYP)' }, correctDate: '1964-03-04' },
+      { event: { ru: '«Гимн свободе» утверждён национальным гимном Кипра', el: 'Ο Ύμνος εις την Ελευθερία καθιερώθηκε ως Εθνικός Ύμνος' }, correctDate: '1966-11-18' },
+      { event: { ru: 'Государственный переворот на Кипре', el: 'Πραξικόπημα στην Κύπρο' }, correctDate: '1974-07-15' },
+      { event: { ru: 'Турецкая военная операция «Аттила»', el: 'Πρώτη φάση της τουρκικής εισβολής' }, correctDate: '1974-07-20' },
+      { event: { ru: 'Вторая фаза турецкого вторжения (операция «Аттила II»)', el: 'Δεύτερη φάση της τουρκικής εισβολής' }, correctDate: '1974-08-14' },
+      { event: { ru: 'Установление «Зелёной линии» (буферная зона ООН)', el: 'Χάραξη της «Πράσινης Γραμμής»' }, correctDate: '1974-08-16' },
+      { event: { ru: 'Смерть Макариоса III', el: 'Θάνατος του Μακαρίου Γ΄' }, correctDate: '1977-08-03' },
+      { event: { ru: 'Провозглашение Турецкой Республики Северного Кипра', el: 'Ανακήρυξη της Τουρκικής Δημοκρατίας Βορείου Κύπρου' }, correctDate: '1983-11-15' },
+      { event: { ru: 'Заявка на вступление в Европейское сообщество (ЕС)', el: 'Αίτηση ένταξης στην Ευρωπαϊκή Κοινότητα' }, correctDate: '1990-07-04' },
+      { event: { ru: 'Европейский совет в Каннах подтверждает включение Кипра в расширение ЕС', el: 'Ευρωπαϊκό Συμβούλιο των Καννών' }, correctDate: '1995-06-26' },
+      { event: { ru: 'Начало переговоров о вступлении в ЕС', el: 'Έναρξη ενταξιακών διαπραγματεύσεων' }, correctDate: '1998-03-31' },
+      { event: { ru: 'Европейский совет в Хельсинки', el: 'Ευρωπαϊκό Συμβούλιο του Ελσίνκι' }, correctDate: '1999-12-10' },
+      { event: { ru: 'Подписание договора о вступлении в ЕС (Афины)', el: 'Υπογραφή της συνθήκης προσχώρησης στην ΕΕ' }, correctDate: '2003-04-16' },
+      { event: { ru: 'Частичное открытие КПП между севером и югом острова', el: 'Μερική άνοιξη οδοφραγμάτων' }, correctDate: '2003-04-23' },
+      { event: { ru: 'Референдум по Плану Аннана', el: 'Δημοψήφισμα για το Σχέδιο Ανάν' }, correctDate: '2004-04-24' },
+      { event: { ru: 'Республика Кипр вступает в ЕС', el: 'Η Δημοκρατία της Κύπρου εντάσσεται στην ΕΕ' }, correctDate: '2004-05-01' },
+      { event: { ru: 'Введение евро в Кипре', el: 'Η Κύπρος εισέρχεται στη ζώνη του Ευρώ' }, correctDate: '2008-01-01' },
+      { event: { ru: 'Кипр председательствует в Совете ЕС', el: 'Η Κύπρος ασκεί την Προεδρία του Συμβουλίου της ΕΕ' }, correctDate: '2012-07-01' },
+      { event: { ru: 'Еврогруппа утверждает программу финансовой помощи', el: 'Το Eurogroup εγκρίνει πρόγραμμα στήριξης' }, correctDate: '2013-03-25' },
+      { event: { ru: 'Завершение программы финансовой помощи ЕС и МВФ', el: 'Ολοκλήρωση του προγράμματος χρηματοδοτικής στήριξης' }, correctDate: '2016-03-31' },
+      { event: { ru: 'Провал переговоров по объединению острова (Крань-Монтана)', el: 'Ναυάγιο των διαπραγματεύσεων (Κρανς-Μοντάνα)' }, correctDate: '2017-07-07' },
+      { event: { ru: 'Совет ЕС принимает санкции в ответ на турецкое бурение в ИЭЗ Кипра', el: 'Συμβούλιο ΕΕ υιοθετεί μέτρα σε απάντηση στις τουρκικές γεωτρήσεις' }, correctDate: '2019-11-11' },
+      { event: { ru: 'Аннита Димитриу избрана первой женщиной — Председателем Парламента Кипра', el: 'Η Αννίτα Δημητρίου εκλέγεται πρώτη γυναίκα Πρόεδρος της Βουλής' }, correctDate: '2021-06-10' },
+      { event: { ru: 'Выборы в Европейский парламент', el: 'Εκλογές για το Ευρωπαϊκό Κοινοβούλιο' }, correctDate: '2024-06-09' },
+    ];
+
+    // Generate wrong dates
+    function generateWrongDates(correctDate, count = 3) {
+      const [year, month, day] = correctDate.split('-').map(Number);
+      const wrongDates = new Set();
+
+      while (wrongDates.size < count) {
+        const option = Math.floor(Math.random() * 3);
+        let newDate;
+
+        if (option === 0) { // Change year
+          let newYear = year + (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 5) + 1);
+          newDate = `${newYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        } else if (option === 1) { // Change month
+          let newMonth = month + (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 6) + 1);
+          newMonth = newMonth < 1 ? 12 + newMonth : newMonth > 12 ? newMonth - 12 : newMonth;
+          newDate = `${year}-${String(newMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        } else { // Change day
+          let newDay = day + (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 20) + 1);
+          newDay = newDay < 1 ? 1 : newDay > 31 ? 31 : newDay;
+          newDate = `${year}-${String(month).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
+        }
+
+        wrongDates.add(newDate);
+      }
+
+      return Array.from(wrongDates);
+    }
+
+    // Format date for display
+    function formatDate(dateStr, lang = 'ru') {
+      const months_ru = ['', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+      const months_el = ['', 'Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου', 'Μαΐου', 'Ιουνίου', 'Ιουλίου', 'Αυγούστου', 'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'];
+      const months = lang === 'el' ? months_el : months_ru;
+
+      const [year, month, day] = dateStr.split('-').map(Number);
+      return `${day} ${months[month]} ${year}`;
+    }
+
+    let quiz = {
+      currentQuestion: 0,
+      correctAnswers: 0,
+      totalQuestions: 0,
+      questions: [],
+      answered: false,
+      selectedOption: null
+    };
+
+    function initializeQuiz() {
+      quiz.questions = quizQuestions.map(q => {
+        const wrongDates = generateWrongDates(q.correctDate);
+        const allDates = [q.correctDate, ...wrongDates].sort(() => Math.random() - 0.5);
+        return {
+          event: q.event,
+          correctDate: q.correctDate,
+          options: allDates.map(date => ({
+            date: date,
+            formatted: formatDate(date, currentLang),
+            isCorrect: date === q.correctDate
+          }))
+        };
+      });
+
+      quiz.currentQuestion = 0;
+      quiz.correctAnswers = 0;
+      quiz.totalQuestions = quiz.questions.length;
+      quiz.answered = false;
+      quiz.selectedOption = null;
+
+      displayQuestion();
+    }
+
+    function displayQuestion() {
+      if (quiz.currentQuestion >= quiz.totalQuestions) {
+        showResults();
+        return;
+      }
+
+      const q = quiz.questions[quiz.currentQuestion];
+      const questionEl = document.getElementById('quizQuestion');
+      const optionsEl = document.getElementById('quizOptions');
+
+      questionEl.innerHTML = `<p>${q.event[currentLang]}</p>`;
+      optionsEl.innerHTML = '';
+
+      q.options.forEach((option, index) => {
+        const label = document.createElement('label');
+        label.className = 'quiz-option';
+        label.innerHTML = `<input type="radio" name="date" value="${index}" ${quiz.answered && option.isCorrect ? 'disabled checked' : ''} ${quiz.answered ? 'disabled' : ''}> ${option.formatted}`;
+        optionsEl.appendChild(label);
+
+        if (!quiz.answered) {
+          label.querySelector('input').addEventListener('change', function() {
+            selectOption(index);
+          });
+        }
+      });
+
+      document.getElementById('quizScore').textContent = quiz.correctAnswers;
+      document.getElementById('quizTotal').textContent = quiz.totalQuestions;
+      document.getElementById('quizNextBtn').style.display = quiz.answered ? 'block' : 'none';
+    }
+
+    function selectOption(index) {
+      if (quiz.answered) return;
+      quiz.selectedOption = index;
+      quiz.answered = true;
+
+      const q = quiz.questions[quiz.currentQuestion];
+      if (q.options[index].isCorrect) {
+        quiz.correctAnswers++;
+      }
+
+      // Highlight correct answer
+      const inputs = document.querySelectorAll('input[name="date"]');
+      inputs.forEach((input, i) => {
+        if (q.options[i].isCorrect) {
+          input.parentElement.style.backgroundColor = '#d4edda';
+        } else if (i === index && !q.options[i].isCorrect) {
+          input.parentElement.style.backgroundColor = '#f8d7da';
+        }
+        input.disabled = true;
+      });
+
+      displayQuestion();
+    }
+
+    function nextQuestion() {
+      quiz.currentQuestion++;
+      quiz.answered = false;
+      quiz.selectedOption = null;
+      document.getElementById('quizNextBtn').style.display = 'none';
+      displayQuestion();
+    }
+
+    function showResults() {
+      document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('quizResults').style.display = 'block';
+      document.getElementById('quizFinalScore').textContent = quiz.correctAnswers;
+      document.getElementById('quizFinalTotal').textContent = quiz.totalQuestions;
+    }
+
+    function restartQuiz() {
+      document.getElementById('quizContainer').style.display = 'block';
+      document.getElementById('quizResults').style.display = 'none';
+      initializeQuiz();
+    }
 
     var currentLang = localStorage.getItem('lang') || 'ru';
 
@@ -499,9 +715,19 @@
       currentLang = lang;
       localStorage.setItem('lang', lang);
       applyTranslations();
+
+      // Reformat quiz dates if quiz is displayed
+      if (quiz.questions.length > 0) {
+        quiz.questions.forEach(q => {
+          q.options.forEach(opt => {
+            opt.formatted = formatDate(opt.date, currentLang);
+          });
+        });
+        displayQuestion();
+      }
     }
 
-    var TABS = ['timeline', 'ministers', 'holidays'];
+    var TABS = ['timeline', 'ministers', 'holidays', 'quiz'];
 
     function setTab(name) {
       TABS.forEach(function(tab) {
@@ -511,6 +737,11 @@
         document.getElementById('tab'   + cap).classList.toggle('active', active);
         document.getElementById('tab'   + cap).setAttribute('aria-selected', String(active));
       });
+
+      // Initialize quiz if quiz tab is clicked
+      if (name === 'quiz' && quiz.totalQuestions === 0) {
+        initializeQuiz();
+      }
     }
 
     document.querySelectorAll('.lang-btn-ru').forEach(function(b) { b.addEventListener('click', function() { setLang('ru'); }); });
@@ -518,6 +749,11 @@
     document.getElementById('tabTimeline').addEventListener('click', function() { setTab('timeline'); });
     document.getElementById('tabMinisters').addEventListener('click', function() { setTab('ministers'); });
     document.getElementById('tabHolidays').addEventListener('click', function() { setTab('holidays'); });
+    document.getElementById('tabQuiz').addEventListener('click', function() { setTab('quiz'); });
+
+    document.getElementById('quizNextBtn').addEventListener('click', nextQuestion);
+    document.getElementById('quizRestartBtn').addEventListener('click', restartQuiz);
+    document.getElementById('quizRestartBtn2').addEventListener('click', restartQuiz);
 
     applyTranslations();
   </script>
