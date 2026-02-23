@@ -24,15 +24,10 @@
   <!-- ─── Tab navigation ───────────────────────────── -->
   <nav class="tabs-nav" role="tablist">
     <div class="container">
-      <div class="menu-wrapper">
-        <button class="menu-btn" id="menuBtn" data-i18n="tabMenu">☰ Меню</button>
-        <div class="dropdown-menu" id="dropdownMenu">
-          <button class="menu-item active" id="itemTimeline" data-section="timeline" data-i18n="tabTimeline">Хронология</button>
-          <button class="menu-item" id="itemMinisters" data-section="ministers" data-i18n="tabMinisters">Министры</button>
-          <button class="menu-item" id="itemHolidays" data-section="holidays" data-i18n="tabHolidays">Праздники</button>
-          <button class="menu-item" id="itemQuiz" data-section="quiz" data-i18n="tabQuiz">Тренажер</button>
-        </div>
-      </div>
+      <button class="tab-btn active" id="tabTimeline" role="tab" aria-selected="true" data-i18n="tabTimeline">Хронология</button>
+      <button class="tab-btn" id="tabMinisters" role="tab" aria-selected="false" data-i18n="tabMinisters">Министры</button>
+      <button class="tab-btn" id="tabHolidays" role="tab" aria-selected="false" data-i18n="tabHolidays">Праздники</button>
+      <button class="tab-btn" id="tabQuiz" role="tab" aria-selected="false" data-i18n="tabQuiz">Тренажер</button>
       <div class="lang-switcher" role="group" aria-label="Language">
         <button class="lang-btn lang-btn-ru active">RU</button>
         <button class="lang-btn lang-btn-el">EL</button>
@@ -766,43 +761,22 @@
         var active = tab === name;
         var cap = tab.charAt(0).toUpperCase() + tab.slice(1);
         document.getElementById('panel' + cap).classList.toggle('active', active);
+        var btn = document.getElementById('tab' + cap);
+        if (btn) {
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-selected', String(active));
+        }
       });
 
-      // Update menu items
-      var menuItems = document.querySelectorAll('.menu-item');
-      menuItems.forEach(function(item) {
-        item.classList.toggle('active', item.dataset.section === name);
-      });
-
-      // Close dropdown menu
-      document.getElementById('dropdownMenu').classList.remove('open');
-
-      // Initialize quiz if quiz tab is clicked
       if (name === 'quiz' && quiz.totalQuestions === 0) {
         initializeQuiz();
       }
     }
 
-    // Menu functionality
-    document.getElementById('menuBtn').addEventListener('click', function() {
-      document.getElementById('dropdownMenu').classList.toggle('open');
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-      var menu = document.getElementById('dropdownMenu');
-      var btn = document.getElementById('menuBtn');
-      if (!menu.contains(e.target) && !btn.contains(e.target)) {
-        menu.classList.remove('open');
-      }
-    });
-
-    // Menu items click
-    document.querySelectorAll('.menu-item').forEach(function(item) {
-      item.addEventListener('click', function() {
-        setTab(this.dataset.section);
-      });
-    });
+    document.getElementById('tabTimeline').addEventListener('click', function() { setTab('timeline'); });
+    document.getElementById('tabMinisters').addEventListener('click', function() { setTab('ministers'); });
+    document.getElementById('tabHolidays').addEventListener('click', function() { setTab('holidays'); });
+    document.getElementById('tabQuiz').addEventListener('click', function() { setTab('quiz'); });
 
     document.querySelectorAll('.lang-btn-ru').forEach(function(b) { b.addEventListener('click', function() { setLang('ru'); }); });
     document.querySelectorAll('.lang-btn-el').forEach(function(b) { b.addEventListener('click', function() { setLang('el'); }); });
