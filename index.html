@@ -647,8 +647,16 @@
       const checkBtn = document.getElementById('quizCheckBtn');
       const nextBtn = document.getElementById('quizNextBtn');
 
-      checkBtn.disabled = quiz.selectedOption === null || quiz.checked;
-      nextBtn.style.display = quiz.checked ? 'block' : 'none';
+      if (quiz.checked) {
+        // After check - show "Next question" button
+        checkBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+      } else {
+        // Before check - show "Check" button
+        checkBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+        checkBtn.disabled = quiz.selectedOption === null;
+      }
 
       // After check - show result
       if (quiz.checked) {
