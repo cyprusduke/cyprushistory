@@ -557,7 +557,7 @@ strong {
 }
 
 .quiz-btn {
-  display: block;
+  display: none;
   width: 100%;
   padding: 1rem;
   border: none;
@@ -569,6 +569,14 @@ strong {
   cursor: pointer;
   transition: background var(--t), transform var(--t);
   margin-top: 1rem;
+}
+
+#quizCheckBtn {
+  display: block;
+}
+
+#quizNextBtn {
+  display: none;
 }
 
 .quiz-btn:hover {

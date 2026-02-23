@@ -349,6 +349,7 @@
       <div id="quizContainer" class="quiz-container">
         <div id="quizQuestion" class="quiz-question"></div>
         <div id="quizOptions" class="quiz-options"></div>
+        <button id="quizCheckBtn" class="quiz-btn" data-i18n="quizCheck">Проверить</button>
         <button id="quizNextBtn" class="quiz-btn" data-i18n="quizNext">Следующий вопрос</button>
         <button id="quizRestartBtn" class="quiz-btn quiz-btn-restart" data-i18n="quizRestart">Начать заново</button>
       </div>
@@ -433,6 +434,7 @@
         era7li4: '<time datetime="2025">2025–2026</time> — Продолжение дипломатических инициатив по кипрскому урегулированию.',
         era7li5: '<time datetime="2026-05">Май 2026 (ожидается)</time> — Парламентские выборы.',
         quizScore:      'Очки:',
+        quizCheck:      'Проверить',
         quizNext:       'Следующий вопрос',
         quizRestart:    'Начать заново',
         quizResults:    'Результаты',
@@ -501,6 +503,7 @@
         era7li4: '<time datetime="2025">2025–2026</time> — Συνέχιση διπλωματικών πρωτοβουλιών για την κυπριακή διευθέτηση.',
         era7li5: '<time datetime="2026-05">Μάιος 2026 (αναμένεται)</time> — Βουλευτικές εκλογές.',
         quizScore:      'Σκορ:',
+        quizCheck:      'Ελέγξτε',
         quizNext:       'Επόμενη ερώτηση',
         quizRestart:    'Ξεκινήστε ξανά',
         quizResults:    'Αποτελέσματα',
@@ -583,6 +586,7 @@
       totalQuestions: 0,
       questions: [],
       answered: false,
+      checked: false,
       selectedOption: null
     };
 
@@ -605,6 +609,7 @@
       quiz.correctAnswers = 0;
       quiz.totalQuestions = quiz.questions.length;
       quiz.answered = false;
+      quiz.checked = false;
       quiz.selectedOption = null;
 
       displayQuestion();
@@ -626,50 +631,55 @@
       q.options.forEach((option, index) => {
         const label = document.createElement('label');
         label.className = 'quiz-option';
-        label.innerHTML = `<input type="radio" name="date" value="${index}" ${quiz.answered && option.isCorrect ? 'disabled checked' : ''} ${quiz.answered ? 'disabled' : ''}> ${option.formatted}`;
+        const isSelected = quiz.selectedOption === index;
+        label.innerHTML = `<input type="radio" name="date" value="${index}" ${isSelected ? 'checked' : ''}> ${option.formatted}`;
         optionsEl.appendChild(label);
 
-        if (!quiz.answered) {
-          label.querySelector('input').addEventListener('change', function() {
-            selectOption(index);
-          });
-        }
+        label.querySelector('input').addEventListener('change', function() {
+          selectOption(index);
+        });
       });
 
       document.getElementById('quizScore').textContent = quiz.correctAnswers;
       document.getElementById('quizTotal').textContent = quiz.totalQuestions;
-      document.getElementById('quizNextBtn').style.display = quiz.answered ? 'block' : 'none';
+      document.getElementById('quizCheckBtn').style.display = quiz.selectedOption !== null && !quiz.checked ? 'block' : 'none';
+      document.getElementById('quizNextBtn').style.display = quiz.checked ? 'block' : 'none';
+
+      // After check - show result
+      if (quiz.checked) {
+        const inputs = document.querySelectorAll('input[name="date"]');
+        inputs.forEach((input, i) => {
+          input.disabled = true;
+          if (q.options[i].isCorrect) {
+            input.parentElement.style.backgroundColor = '#d4edda';
+          } else if (i === quiz.selectedOption && !q.options[i].isCorrect) {
+            input.parentElement.style.backgroundColor = '#f8d7da';
+          }
+        });
+      }
     }
 
     function selectOption(index) {
-      if (quiz.answered) return;
       quiz.selectedOption = index;
-      quiz.answered = true;
+      displayQuestion();
+    }
+
+    function checkAnswer() {
+      if (quiz.selectedOption === null || quiz.checked) return;
+      quiz.checked = true;
 
       const q = quiz.questions[quiz.currentQuestion];
-      if (q.options[index].isCorrect) {
+      if (q.options[quiz.selectedOption].isCorrect) {
         quiz.correctAnswers++;
       }
-
-      // Highlight correct answer
-      const inputs = document.querySelectorAll('input[name="date"]');
-      inputs.forEach((input, i) => {
-        if (q.options[i].isCorrect) {
-          input.parentElement.style.backgroundColor = '#d4edda';
-        } else if (i === index && !q.options[i].isCorrect) {
-          input.parentElement.style.backgroundColor = '#f8d7da';
-        }
-        input.disabled = true;
-      });
 
       displayQuestion();
     }
 
     function nextQuestion() {
       quiz.currentQuestion++;
-      quiz.answered = false;
+      quiz.checked = false;
       quiz.selectedOption = null;
-      document.getElementById('quizNextBtn').style.display = 'none';
       displayQuestion();
     }
 
@@ -683,6 +693,8 @@
     function restartQuiz() {
       document.getElementById('quizContainer').style.display = 'block';
       document.getElementById('quizResults').style.display = 'none';
+      quiz.checked = false;
+      quiz.answered = false;
       initializeQuiz();
     }
 
@@ -751,6 +763,7 @@
     document.getElementById('tabHolidays').addEventListener('click', function() { setTab('holidays'); });
     document.getElementById('tabQuiz').addEventListener('click', function() { setTab('quiz'); });
 
+    document.getElementById('quizCheckBtn').addEventListener('click', checkAnswer);
     document.getElementById('quizNextBtn').addEventListener('click', nextQuestion);
     document.getElementById('quizRestartBtn').addEventListener('click', restartQuiz);
     document.getElementById('quizRestartBtn2').addEventListener('click', restartQuiz);
