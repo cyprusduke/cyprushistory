@@ -642,8 +642,13 @@
 
       document.getElementById('quizScore').textContent = quiz.correctAnswers;
       document.getElementById('quizTotal').textContent = quiz.totalQuestions;
-      document.getElementById('quizCheckBtn').style.display = quiz.selectedOption !== null && !quiz.checked ? 'block' : 'none';
-      document.getElementById('quizNextBtn').style.display = quiz.checked ? 'block' : 'none';
+
+      // Manage buttons
+      const checkBtn = document.getElementById('quizCheckBtn');
+      const nextBtn = document.getElementById('quizNextBtn');
+
+      checkBtn.disabled = quiz.selectedOption === null || quiz.checked;
+      nextBtn.style.display = quiz.checked ? 'block' : 'none';
 
       // After check - show result
       if (quiz.checked) {
