@@ -175,9 +175,14 @@ h1 {
   display: flex;
   gap: 0.6rem;
   align-items: center;
+  justify-content: space-between;
 }
 
-.tab-btn {
+.menu-wrapper {
+  position: relative;
+}
+
+.menu-btn {
   border: 1.5px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.04);
   color: rgba(244, 247, 250, 0.9);
@@ -189,16 +194,61 @@ h1 {
   transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
 }
 
-.tab-btn:hover {
+.menu-btn:hover {
   background: rgba(255, 255, 255, 0.11);
   border-color: rgba(255, 255, 255, 0.34);
   transform: translateY(-1px);
 }
 
-.tab-btn.active {
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background: rgba(9, 26, 39, 0.98);
+  border: 1.5px solid var(--line-dark);
+  border-radius: 10px;
+  margin-top: 0.5rem;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--t);
+  box-shadow: var(--shadow-md);
+}
+
+.dropdown-menu.open {
+  max-height: 500px;
+}
+
+.menu-item {
+  border: none;
+  background: transparent;
+  color: rgba(244, 247, 250, 0.7);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--t), color var(--t);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(244, 247, 250, 0.9);
+}
+
+.menu-item.active {
   background: var(--accent);
-  border-color: var(--accent);
   color: #13283a;
+  font-weight: 700;
 }
 
 .panel {
