@@ -469,6 +469,40 @@ strong {
   background: rgba(192, 139, 44, 0.10);
 }
 
+/* ─── Quiz mode switcher ─────────────────────────── */
+
+.quiz-mode-switcher {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--line-gold);
+}
+
+.quiz-mode-btn {
+  padding: 0.5rem 1.2rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(244, 247, 250, 0.9);
+  border-radius: 999px;
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background var(--t), color var(--t), border-color var(--t);
+}
+
+.quiz-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+.quiz-mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #13283a;
+}
+
 /* ─── Quiz panel ──────────────────────────────────── */
 
 .quiz {
