@@ -343,6 +343,7 @@
       <div class="quiz-mode-switcher">
         <button id="quizModeDates" class="quiz-mode-btn active" data-i18n="quizModeDates">Тренажер дат</button>
         <button id="quizModeMinister" class="quiz-mode-btn" data-i18n="quizModeMinister">Тренажер министров</button>
+        <button id="quizModePresidents" class="quiz-mode-btn" data-i18n="quizModePresidents">Тренажер президентов</button>
       </div>
 
       <div id="quizDatesSection">
@@ -388,6 +389,29 @@
           <h3 data-i18n="quizResults">Результаты</h3>
           <p><span data-i18n="quizFinal">Ваш результат:</span> <span id="mquizFinalScore">0</span> / <span id="mquizFinalTotal">0</span></p>
           <button id="mquizRestartBtn2" class="quiz-btn" data-i18n="quizRestart">Начать заново</button>
+        </div>
+      </div>
+
+      <div id="quizPresidentsSection" style="display:none;">
+        <div class="quiz-header">
+          <h2 data-i18n="quizModePresidents">Тренажер президентов</h2>
+          <div class="quiz-stats">
+            <span data-i18n="quizScore">Очки:</span> <span id="pquizScore">0</span> / <span id="pquizTotal">0</span>
+          </div>
+        </div>
+
+        <div id="pquizContainer" class="quiz-container">
+          <div id="pquizQuestion" class="quiz-question"></div>
+          <div id="pquizOptions" class="quiz-options"></div>
+          <button id="pquizCheckBtn" class="quiz-btn" data-i18n="quizCheck">Проверить</button>
+          <button id="pquizNextBtn" class="quiz-btn" data-i18n="quizNext">Следующий вопрос</button>
+          <button id="pquizRestartBtn" class="quiz-btn quiz-btn-restart" data-i18n="quizRestart">Начать заново</button>
+        </div>
+
+        <div id="pquizResults" class="quiz-results" style="display:none;">
+          <h3 data-i18n="quizResults">Результаты</h3>
+          <p><span data-i18n="quizFinal">Ваш результат:</span> <span id="pquizFinalScore">0</span> / <span id="pquizFinalTotal">0</span></p>
+          <button id="pquizRestartBtn2" class="quiz-btn" data-i18n="quizRestart">Начать заново</button>
         </div>
       </div>
 
@@ -472,10 +496,14 @@
         quizRestart:      'Начать заново',
         quizResults:      'Результаты',
         quizFinal:        'Ваш результат:',
-        quizModeDates:    'Тренажер дат',
-        quizModeMinister: 'Тренажер министров',
-        mquizNamePrefix:  'Кто занимает должность:',
-        mquizRolePrefix:  'Какую должность занимает:',
+        quizModeDates:      'Тренажер дат',
+        quizModeMinister:   'Тренажер министров',
+        mquizNamePrefix:    'Кто занимает должность:',
+        mquizRolePrefix:    'Какую должность занимает:',
+        quizModePresidents: 'Тренажер президентов',
+        pquizPeriodPrefix:  'Годы президентства:',
+        pquizYearQ:         'Кто был президентом Кипра в',
+        pquizYearSuffix:    'году?',
       },
       el: {
         pageTitle:      'Δημοκρατία της Κύπρου',
@@ -546,10 +574,14 @@
         quizRestart:      'Ξεκινήστε ξανά',
         quizResults:      'Αποτελέσματα',
         quizFinal:        'Το αποτέλεσμά σας:',
-        quizModeDates:    'Δοκιμή ημερομηνιών',
-        quizModeMinister: 'Δοκιμή υπουργών',
-        mquizNamePrefix:  'Ποιος κατέχει τη θέση:',
-        mquizRolePrefix:  'Ποια θέση κατέχει:',
+        quizModeDates:      'Δοκιμή ημερομηνιών',
+        quizModeMinister:   'Δοκιμή υπουργών',
+        mquizNamePrefix:    'Ποιος κατέχει τη θέση:',
+        mquizRolePrefix:    'Ποια θέση κατέχει:',
+        quizModePresidents: 'Δοκιμή προέδρων',
+        pquizPeriodPrefix:  'Χρόνια προεδρίας:',
+        pquizYearQ:         'Ποιος ήταν Πρόεδρος της Κύπρου το',
+        pquizYearSuffix:    ';',
       }
     };
 
@@ -911,11 +943,156 @@
     function setQuizMode(mode) {
       document.getElementById('quizDatesSection').style.display = mode === 'dates' ? '' : 'none';
       document.getElementById('quizMinisterSection').style.display = mode === 'minister' ? '' : 'none';
+      document.getElementById('quizPresidentsSection').style.display = mode === 'presidents' ? '' : 'none';
       document.getElementById('quizModeDates').classList.toggle('active', mode === 'dates');
       document.getElementById('quizModeMinister').classList.toggle('active', mode === 'minister');
-      if (mode === 'minister' && mquiz.totalQuestions === 0) {
-        initializeMinisterQuiz();
+      document.getElementById('quizModePresidents').classList.toggle('active', mode === 'presidents');
+      if (mode === 'minister' && mquiz.totalQuestions === 0) initializeMinisterQuiz();
+      if (mode === 'presidents' && pquiz.totalQuestions === 0) initializePresidentQuiz();
+    }
+
+    // ─── Presidents quiz ────────────────────────────────
+
+    const presidentQuizData = [
+      { name: { ru: 'Архиепископ Макариос III', el: 'Αρχιεπίσκοπος Μακάριος Γ΄' }, start: 1960, end: 1977 },
+      { name: { ru: 'Спирос Киприану',          el: 'Σπύρος Κυπριανού' },           start: 1977, end: 1988 },
+      { name: { ru: 'Георгиос Василиу',          el: 'Γεώργιος Βασιλείου' },         start: 1988, end: 1993 },
+      { name: { ru: 'Глафкос Клиридис',          el: 'Γλαύκος Κληρίδης' },           start: 1993, end: 2003 },
+      { name: { ru: 'Тассос Пападопулос',        el: 'Τάσσος Παπαδόπουλος' },        start: 2003, end: 2008 },
+      { name: { ru: 'Димитрис Христофиас',       el: 'Δημήτρης Χριστόφιας' },        start: 2008, end: 2013 },
+      { name: { ru: 'Никос Анастасиадис',        el: 'Νίκος Αναστασιάδης' },         start: 2013, end: 2023 },
+      { name: { ru: 'Никос Христодулидис',       el: 'Νίκος Χριστοδουλίδης' },       start: 2023, end: null },
+    ];
+
+    function formatPeriod(start, end, lang) {
+      const current = lang === 'el' ? 'σήμερα' : 'н.в.';
+      return end === null ? `${start} – ${current}` : `${start} – ${end}`;
+    }
+
+    let pquiz = {
+      currentQuestion: 0,
+      correctAnswers: 0,
+      totalQuestions: 0,
+      questions: [],
+      checked: false,
+      selectedOption: null
+    };
+
+    function initializePresidentQuiz() {
+      const shuffled = [...presidentQuizData].sort(() => Math.random() - 0.5);
+      pquiz.questions = shuffled.map(item => {
+        if (Math.random() > 0.5) {
+          // Type 'period': show president name → pick correct term years
+          const wrongItems = [...presidentQuizData]
+            .filter(d => d.start !== item.start)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+          const options = [
+            { text: { ru: formatPeriod(item.start, item.end, 'ru'), el: formatPeriod(item.start, item.end, 'el') }, isCorrect: true },
+            ...wrongItems.map(d => ({ text: { ru: formatPeriod(d.start, d.end, 'ru'), el: formatPeriod(d.start, d.end, 'el') }, isCorrect: false }))
+          ].sort(() => Math.random() - 0.5);
+          return { type: 'period', prompt: item.name, options };
+        } else {
+          // Type 'name': show year → pick correct president
+          const year = item.end === null ? 2024 : item.start + Math.floor((item.end - item.start) / 2);
+          const wrongItems = [...presidentQuizData]
+            .filter(d => d.start !== item.start)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+          const options = [
+            { text: item.name, isCorrect: true },
+            ...wrongItems.map(d => ({ text: d.name, isCorrect: false }))
+          ].sort(() => Math.random() - 0.5);
+          return { type: 'name', year, options };
+        }
+      });
+      pquiz.currentQuestion = 0;
+      pquiz.correctAnswers = 0;
+      pquiz.totalQuestions = pquiz.questions.length;
+      pquiz.checked = false;
+      pquiz.selectedOption = null;
+      displayPresidentQuestion();
+    }
+
+    function displayPresidentQuestion() {
+      if (pquiz.currentQuestion >= pquiz.totalQuestions) { showPresidentResults(); return; }
+      const q = pquiz.questions[pquiz.currentQuestion];
+      const t = translations[currentLang];
+      const questionEl = document.getElementById('pquizQuestion');
+      const optionsEl = document.getElementById('pquizOptions');
+
+      if (q.type === 'period') {
+        questionEl.innerHTML = `<p>${t.pquizPeriodPrefix}<br><strong>${q.prompt[currentLang]}</strong></p>`;
+      } else {
+        questionEl.innerHTML = `<p>${t.pquizYearQ} <strong>${q.year}</strong> ${t.pquizYearSuffix}</p>`;
       }
+      optionsEl.innerHTML = '';
+
+      q.options.forEach((option, index) => {
+        const label = document.createElement('label');
+        label.className = 'quiz-option';
+        const isSelected = pquiz.selectedOption === index;
+        label.innerHTML = `<input type="radio" name="pquiz" value="${index}" ${isSelected ? 'checked' : ''}> ${option.text[currentLang]}`;
+        optionsEl.appendChild(label);
+        label.querySelector('input').addEventListener('change', function() { selectPresidentOption(index); });
+      });
+
+      document.getElementById('pquizScore').textContent = pquiz.correctAnswers;
+      document.getElementById('pquizTotal').textContent = pquiz.totalQuestions;
+
+      const checkBtn = document.getElementById('pquizCheckBtn');
+      const nextBtn = document.getElementById('pquizNextBtn');
+      if (pquiz.checked) {
+        checkBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+      } else {
+        checkBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+        checkBtn.disabled = pquiz.selectedOption === null;
+      }
+
+      if (pquiz.checked) {
+        document.querySelectorAll('input[name="pquiz"]').forEach((input, i) => {
+          input.disabled = true;
+          if (q.options[i].isCorrect) {
+            input.parentElement.style.backgroundColor = '#d4edda';
+          } else if (i === pquiz.selectedOption && !q.options[i].isCorrect) {
+            input.parentElement.style.backgroundColor = '#f8d7da';
+          }
+        });
+      }
+    }
+
+    function selectPresidentOption(index) {
+      pquiz.selectedOption = index;
+      displayPresidentQuestion();
+    }
+
+    function checkPresidentAnswer() {
+      if (pquiz.selectedOption === null || pquiz.checked) return;
+      pquiz.checked = true;
+      if (pquiz.questions[pquiz.currentQuestion].options[pquiz.selectedOption].isCorrect) pquiz.correctAnswers++;
+      displayPresidentQuestion();
+    }
+
+    function nextPresidentQuestion() {
+      pquiz.currentQuestion++;
+      pquiz.checked = false;
+      pquiz.selectedOption = null;
+      displayPresidentQuestion();
+    }
+
+    function showPresidentResults() {
+      document.getElementById('pquizContainer').style.display = 'none';
+      document.getElementById('pquizResults').style.display = 'block';
+      document.getElementById('pquizFinalScore').textContent = pquiz.correctAnswers;
+      document.getElementById('pquizFinalTotal').textContent = pquiz.totalQuestions;
+    }
+
+    function restartPresidentQuiz() {
+      document.getElementById('pquizContainer').style.display = 'block';
+      document.getElementById('pquizResults').style.display = 'none';
+      initializePresidentQuiz();
     }
 
     var currentLang = localStorage.getItem('lang') || 'ru';
@@ -961,6 +1138,10 @@
       if (mquiz.questions.length > 0 && mquiz.currentQuestion < mquiz.totalQuestions) {
         displayMinisterQuestion();
       }
+      // Re-display presidents quiz question if active
+      if (pquiz.questions.length > 0 && pquiz.currentQuestion < pquiz.totalQuestions) {
+        displayPresidentQuestion();
+      }
     }
 
     var TABS = ['timeline', 'ministers', 'holidays', 'quiz'];
@@ -997,10 +1178,15 @@
 
     document.getElementById('quizModeDates').addEventListener('click', function() { setQuizMode('dates'); });
     document.getElementById('quizModeMinister').addEventListener('click', function() { setQuizMode('minister'); });
+    document.getElementById('quizModePresidents').addEventListener('click', function() { setQuizMode('presidents'); });
     document.getElementById('mquizCheckBtn').addEventListener('click', checkMinisterAnswer);
     document.getElementById('mquizNextBtn').addEventListener('click', nextMinisterQuestion);
     document.getElementById('mquizRestartBtn').addEventListener('click', restartMinisterQuiz);
     document.getElementById('mquizRestartBtn2').addEventListener('click', restartMinisterQuiz);
+    document.getElementById('pquizCheckBtn').addEventListener('click', checkPresidentAnswer);
+    document.getElementById('pquizNextBtn').addEventListener('click', nextPresidentQuestion);
+    document.getElementById('pquizRestartBtn').addEventListener('click', restartPresidentQuiz);
+    document.getElementById('pquizRestartBtn2').addEventListener('click', restartPresidentQuiz);
 
     applyTranslations();
   </script>
